@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Letter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+        body {
+            font-family: 'Dancing Script', cursive;
+            background: url('https://c0.wallpaperflare.com/preview/405/651/627/city-night-dark-brown.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .letter-container {
+            background: #fff8e7;
+            width: 50%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            line-height: 1.8em;
+            border: 1px solid #d4af91;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .letter-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            opacity: 0.8;
+            border-radius: 10px;
+        }
+        .letter-header {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #a0522d;
+            position: relative;
+        }
+        .letter-body {
+            font-size: 1.4em;
+            margin-top: 20px;
+            color: #5a3e2b;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .letter-footer {
+            margin-top: 30px;
+            font-size: 1.2em;
+            text-align: right;
+            color: #a0522d;
+            position: relative;
+        }
+        input, textarea, button {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2em;
+            margin: 10px 0;
+            padding: 10px;
+            width: 90%;
+            border: 1px solid #a0522d;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #a0522d;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #8b3e2b;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has("name") && params.has("message")) {
+                document.body.innerHTML = `
+                    <div class='letter-container'>
+                        <div class='letter-header'>Dear ${decodeURIComponent(params.get("name"))},</div>
+                        <div class='letter-body'>${decodeURIComponent(params.get("message"))}</div>
+                        <div class='letter-footer'>With love,<br>Shini🤎</div>
+                    </div>
+                `;
+            } else {
+                document.body.innerHTML = `
+                    <div class='form-container'>
+                        <h2>Create Your Letter</h2>
+                        <input type='text' id='inputName' placeholder="Enter recipient's name" />
+                        <textarea id='inputMessage' placeholder="Type your message..."></textarea>
+                        <button onclick='generateLink()'>Generate Link</button>
+                        <p id='generatedLink'></p>
+                        <button id='copyButton' style='display: none;' onclick='copyLink()'>Copy Link</button>
+                    </div>
+                `;
+            }
+        }
+
+        function generateLink() {
+            const name = encodeURIComponent(document.getElementById("inputName").value);
+            const message = encodeURIComponent(document.getElementById("inputMessage").value);
+            if (name && message) {
+                const link = `${window.location.origin}${window.location.pathname}?name=${name}&message=${message}`;
+                document.getElementById("generatedLink").innerHTML = `<a href="${link}" target="_blank">Click here to share your letter</a>`;
+                document.getElementById("copyButton").style.display = "block";
+                document.getElementById("copyButton").setAttribute("data-link", link);
+            } else {
+                document.getElementById("generatedLink").textContent = "Please enter both name and message.";
+                document.getElementById("copyButton").style.display = "none";
+            }
+        }
+
+        function copyLink() {
+            const link = document.getElementById("copyButton").getAttribute("data-link");
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Link copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+        }
+
+        window.onload = loadFromURL;
+    </script>
+</body>
+</html>
+
